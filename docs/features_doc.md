@@ -22,6 +22,10 @@
    Type: binary (1 or 0)<br>
    Description: If player is rookie (Adjust for lack of stats)<br>
 
+- 'draft_pos'<br>
+   Type: int
+   Description: If player is rookie their draft position in used since they have no stats for week 1
+
 - 'experience_years'<br>
    Type: int<br>
    Description: Total years player has been in the NFL<br>
@@ -70,6 +74,10 @@
 
 ## Game Conditions
 
+- 'game_type'
+   Type: string (pre, reg, post)
+   Description: What type of game, preseasion, regular season, or post season
+
 - 'home_away'<br>
    Type: string (home or away)<br>
    Description: If player's team is playing at home or away<br>
@@ -81,6 +89,10 @@
 - 'opponent_team'<br>
    Type: string<br>
    Description: Opponent team name<br>
+
+- 'w_l'<br>
+   Type: char<br>
+   Description: If player's team won or lose the game
 
 - 'game_temp'<br>
    Type: int<br>
