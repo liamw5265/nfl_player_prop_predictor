@@ -1,1 +1,4 @@
 python == 3.13.9
+nflreadpy == 0.1.5
+pandas == 2.3.0
+polars == 1.39.0
