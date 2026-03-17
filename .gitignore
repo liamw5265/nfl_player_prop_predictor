@@ -4,4 +4,5 @@ data/
 # Y'all not taking my API keys
 *.env 
 
+__pycache__/
 tempCodeRunnerFile.py
