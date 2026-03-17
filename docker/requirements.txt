@@ -3,3 +3,5 @@ nflreadpy == 0.1.5
 pandas == 2.3.0
 polars == 1.39.0 
 termcolor == 3.3.0 # Bug testing in terminal
+python-dotenv == 1.2.2 
+requests == 2.32.5 
