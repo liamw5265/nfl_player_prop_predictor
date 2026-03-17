@@ -74,6 +74,14 @@
 
 ## Game Conditions
 
+- 'game_date'
+   Type: string (yyyy-mm-dd)
+   Description: Day the game took place
+
+- 'game_time_hour'
+   Type: int (24 hour format)
+   Description: Time in hours the game took place
+
 - 'game_type'
    Type: string (pre, reg, post)
    Description: What type of game, preseasion, regular season, or post season
