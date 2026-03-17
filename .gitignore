@@ -1,4 +1,5 @@
 data/
+*.json
 
 # Y'all not taking my API keys
 *.env 
