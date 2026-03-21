@@ -98,6 +98,18 @@
    Type: string<br>
    Description: Opponent team name<br>
 
+- 'team_score'<br>
+   Type: int<br>
+   Description: Score of player's team<br>
+
+- 'opponent_score'<br>
+   Type: int<br>
+   Description: Score of opponent's team<br>
+
+- 'overtime'<br>
+   Type: boolean<br>
+   Description: If game went to overtime<br>
+
 - 'w_l'<br>
    Type: char<br>
    Description: If player's team won or lose the game
