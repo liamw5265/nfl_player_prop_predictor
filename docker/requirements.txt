@@ -5,3 +5,7 @@ polars == 1.39.0
 termcolor == 3.3.0 # Bug testing in terminal
 python-dotenv == 1.2.2 
 requests == 2.32.5 
+beautfulsoup4 == 4.14.3
+bs4 == 0.0.2
+soupsieve == 2.8.3
+
