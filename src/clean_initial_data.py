@@ -1,5 +1,5 @@
 import pandas as pd
-from load_initial_data import load_weekly_individual_offense_players_stats, load_usage_stats, load_depth_chart
+from load_initial_data import load_weekly_individual_offense_players_stats, load_usage_stats, load_depth_chart, load_team_stats
 
 POSITION_LIST = ['QB', 'RB', 'WR', 'TE', 'K']
 
@@ -102,8 +102,109 @@ def clean_and_download_weekly_offensive_depth_chart(seasons: int | list[int] | N
 
     return cleaned_dataframe
 
+def clean_and_download_weekly_team_stats(seasons: int | list[int] | None) -> pd.DataFrame:
+    '''
+    
+    '''
+    if seasons is None:
+        all_stats = load_team_stats()
+    elif seasons:
+        all_stats = load_team_stats(seasons)
 
+    passing_stats = (
+        all_stats[ 
+        ['team', 'opponent_team', 'week', 'passing_yards', 'sack_yards_lost']]
+        .copy())
+    passing_stats = passing_stats.sort_values(['team', 'week'])
+    passing_stats['net_passing_yards'] = (
+        passing_stats['passing_yards'] + passing_stats['sack_yards_lost'])
+    passing_stats['total_net_passing_yards'] = (
+        passing_stats.groupby('team')['net_passing_yards'].cumsum())
+    passing_stats['net_passing_yards_per_game'] = (
+        passing_stats['total_net_passing_yards'] / passing_stats['week'])
+    passing_stats['passing_rank'] = (
+        passing_stats.groupby('week')['net_passing_yards_per_game']
+        .rank(ascending = False, method = 'min')
+        .astype(int))
+
+
+    rushing_stats = (
+        all_stats[
+        ['team', 'opponent_team', 'week', 'rushing_yards']]
+        .copy())
+    rushing_stats = rushing_stats.sort_values(['team', 'week'])
+    rushing_stats['total_rushing_yards'] = (
+        rushing_stats.groupby('team')['rushing_yards'].cumsum()) 
+    rushing_stats['net_rushing_yards_per_game'] = (
+        rushing_stats['total_rushing_yards'] / rushing_stats['week'])
+    rushing_stats['rushing_rank'] = (
+        rushing_stats.groupby('week')['net_rushing_yards_per_game']
+        .rank(ascending = False, method = 'min')
+        .astype(int))
+
+
+    passing_yards_allowed = (
+        passing_stats[['week', 'team', 'net_passing_yards']]
+        .copy())
+    passing_yards_allowed = (
+        passing_yards_allowed.rename(columns = {
+            'team': 'opponent_team_lookup', 
+            'net_passing_yards': 'net_passing_yards_allowed'}))
+    passing_yards_allowed['passing_allowed_rank'] = (
+        passing_yards_allowed.groupby('week')['net_passing_yards_allowed']
+        .rank(ascending = True, method = 'min').astype(int))
+
+
+    rushing_yards_allowed = (
+        rushing_stats[['week', 'team', 'rushing_yards']]
+        .copy())
+    rushing_yards_allowed = (
+        rushing_yards_allowed.rename(columns = {
+            'team': 'opponent_team_lookup', 
+            'rushing_yards': 'rushing_yards_allowed'}))
+    rushing_yards_allowed['rushing_allowed_rank'] = (
+        rushing_yards_allowed.groupby('week')['rushing_yards_allowed']
+        .rank(ascending = True, method = 'min').astype(int))
+
+
+    passing_stats = (
+        passing_stats.merge(passing_yards_allowed, 
+        left_on = ['week', 'opponent_team'], 
+        right_on = ['week', 'opponent_team_lookup'], 
+        how = 'left').drop(columns = ['opponent_team_lookup']))
+
+    rushing_stats = (
+        rushing_stats.merge(rushing_yards_allowed, 
+        left_on = ['week', 'opponent_team'], 
+        right_on = ['week', 'opponent_team_lookup'], 
+        how = 'left').drop(columns = ['opponent_team_lookup']))
+
+    final = (
+        passing_stats.merge(rushing_stats[
+        ['team', 'week', 'rushing_yards', 'total_rushing_yards', 
+        'net_rushing_yards_per_game', 'rushing_rank', 
+        'rushing_yards_allowed', 'rushing_allowed_rank']], 
+        on = ['team', 'week'], how = 'left'))
+
+
+    final = final.round(2)
+    final = final.sort_values(['week', 'team'])
+
+    final = (
+        final[
+        ['week', 'team', 'opponent_team', 
+        'passing_yards', 'sack_yards_lost', 
+        'net_passing_yards', 'total_net_passing_yards', 
+        'rushing_yards', 'total_rushing_yards', 
+        'net_passing_yards_per_game', 'passing_rank', 
+        'net_rushing_yards_per_game', 'rushing_rank', 
+        'net_passing_yards_allowed', 'passing_allowed_rank', 
+        'rushing_yards_allowed', 'rushing_allowed_rank']])
+    
+
+    final.to_csv('testtesttesttesttest.csv', index = False)
+    return final
 
 
 if __name__ == '__main__':
-    clean_and_download_weekly_offensive_depth_chart(2025)
+    clean_and_download_weekly_team_stats(2025)
